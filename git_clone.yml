@@ -1,0 +1,23 @@
+---
+  - hosts: localhost
+    become: yes
+    tasks:
+      - name: clone git repository
+        git:
+           repo: https://github.com/ybmadhu/spring3-mvc-maven-xml-hello-world.git
+           dest: /home/mylogin/hello
+           update: yes
+           version: master
+      - name: packing the maven build
+        shell: " mvn clean package "
+        args:
+         chdir: /home/mylogin/hello
+      - name: copy arti facts to document root
+        copy:
+         src: /home/mylogin/hello/target/spring3-mvc-maven-xml-hello-world-1.2.war
+         dest: /usr/share/tomcat/webapps/
+      - name: restart httpd
+        service:
+           name: tomcat
+           state: restarted
+
